@@ -18,6 +18,7 @@ import backend.visitor as Visitor
 import backend.listener as Listener
 from backend.custom_error import CustomErrorListener
 import backend.intermediate as inter
+from backend.mips import codeGenerator
 from graphviz import Digraph
 import shutil
 import sys
@@ -68,7 +69,7 @@ def home():
 
 @app.route('/', methods = ["POST"])
 def get_code():
-
+    MIP = ""
     errors = []
     code = ""
     code = request.form["codigo"]
@@ -138,10 +139,12 @@ def get_code():
             intermedio = inter.Inter(visitonator.total_scopes,visitonator.clases,visitonator.metodos,visitonator.ownmethod,visitonator.property,visitonator.formal,visitonator.assignment,visitonator.methodcall,visitonator.ifCount,visitonator.equal,visitonator.lessequal,visitonator.lessthan,visitonator.minus,visitonator.add,visitonator.division,visitonator.multiply,visitonator.whileCount,visitonator.declaration,visitonator.letin,visitonator.void,visitonator.negative,visitonator.boolnot,visitonator.case,visitonator.new,visitonator.string,visitonator.valor,visitonator.block,visitonator.id,visitonator.parentheses,visitonator.fals,visitonator.integer,visitonator.truet,visitonator.instr,visitonator.outstring,visitonator.outint)
             intermedio.visit(tree)
             intercode = intermedio.line.split("\n")
+            MIPS = codeGenerator(intermedio.line)
+            MIP = MIPS.split("\n")
 
     else:
         errors = []
-    return render_template("home.html", errors = errors, code = code, intercode = intercode, )
+    return render_template("home.html", errors = errors, code = code, intercode = intercode, mips = MIP)
 
 
 @app.route('/tree.html')
